@@ -14,18 +14,23 @@ class AudioSignal(object):
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(format=pyaudio.paInt16,
                                   channels=1,
-                                  input_device_index=2,
+                                  #input_device_index=2,
                                   rate=RATE,
                                   input=True,
                                   frames_per_buffer=CHUNK)
 
     def __call__(self):
         try:
-            ydata = np.frombuffer(
+            ydata = np.fromstring(
                 self.stream.read(CHUNK, exception_on_overflow=False),
                 dtype=np.int16)
             xdata = np.linspace(0, len(ydata), len(ydata))
-            return xdata, ydata
+            fft = abs(np.fft.fft(ydata).real)
+            fft = fft[:int(len(fft)/2)]
+            freq = np.fft.fftfreq(CHUNK, 1./RATE)
+            freq = freq[:int(len(freq)/2)]
+            #return xdata, ydata
+            return freq, fft
         except Exception:
             raise RuntimeError
 
@@ -49,8 +54,10 @@ if __name__=='__main__':
     ln, = plt.plot([], [])
     
     def init():
-        ax.set_xlim(0, 4096)
-        ax.set_ylim(-2**16/2, 2**16/2)
+        #ax.set_xlim(0, 4096)
+        #ax.set_ylim(-2**16/2, 2**16/2)
+        ax.set_xlim(0, 24000)
+        ax.set_ylim(0, 2**17)
         return ln,
 
     def animate(args):
