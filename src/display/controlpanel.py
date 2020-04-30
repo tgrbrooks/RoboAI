@@ -1,12 +1,18 @@
 # pyqt imports
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QListWidget, QGridLayout, QWidget, QTabWidget, QScrollArea, QVBoxLayout, QSizePolicy, QComboBox, QLabel, QLineEdit, QCheckBox
+from PyQt5.QtWidgets import (QMainWindow, QPushButton, QListWidget,
+                             QGridLayout, QWidget, QTabWidget, QScrollArea,
+                             QVBoxLayout, QSizePolicy, QComboBox, QLabel,
+                             QLineEdit, QCheckBox)
 
 class Label(QWidget):
 
     def __init__(self, text, col, *args, **kwargs):
         super(Label, self).__init__(*args, **kwargs)
         label = QLabel(text)
-        label.setStyleSheet('font-size: 28pt; font-family: Courier; background-color: %s' % (col))
+        label.setStyleSheet(
+            'font-size: 28pt; font-family: Courier; background-color: %s'
+            % (col)
+        )
         layout = QVBoxLayout()
         layout.addWidget(label)
         self.setLayout(layout)
@@ -33,9 +39,9 @@ class ControlPanel(QMainWindow):
         default_font = 'font-size: 14pt; font-family: Courier;'
         big_font = 'font-size: 28pt; font-family: Courier;'
 
-        #--------------------------------------------------------------------------------------
-        #                               MAIN TAB - ALL INFO
-        #--------------------------------------------------------------------------------------
+        #----------------------------------------------------------------------
+        #                       MAIN TAB - ALL INFO
+        #----------------------------------------------------------------------
 
         main_layout = QGridLayout()
         main_layout.setContentsMargins(0,0,0,0)
@@ -71,9 +77,9 @@ class ControlPanel(QMainWindow):
         main_widget.setLayout(main_layout)
         tabs.addTab(main_widget, 'Main')
 
-        #--------------------------------------------------------------------------------------
-        #                                   VISION TAB
-        #--------------------------------------------------------------------------------------
+        #----------------------------------------------------------------------
+        #                               VISION TAB
+        #----------------------------------------------------------------------
 
         vision_layout = QGridLayout()
         vision_layout.setContentsMargins(0,0,0,0)
@@ -83,9 +89,9 @@ class ControlPanel(QMainWindow):
         vision_widget.setLayout(vision_layout)
         tabs.addTab(vision_widget, 'Vision')
 
-        #--------------------------------------------------------------------------------------
-        #                                   AUDIO TAB
-        #--------------------------------------------------------------------------------------
+        #----------------------------------------------------------------------
+        #                               AUDIO TAB
+        #----------------------------------------------------------------------
 
         audio_layout = QGridLayout()
         audio_layout.setContentsMargins(0,0,0,0)
@@ -95,9 +101,9 @@ class ControlPanel(QMainWindow):
         audio_widget.setLayout(audio_layout)
         tabs.addTab(audio_widget, 'Audio')
 
-        #--------------------------------------------------------------------------------------
-        #                                 MOVEMENT TAB
-        #--------------------------------------------------------------------------------------
+        #----------------------------------------------------------------------
+        #                               MOVEMENT TAB
+        #----------------------------------------------------------------------
 
         movement_layout = QGridLayout()
         movement_layout.setContentsMargins(0,0,0,0)
