@@ -18,8 +18,8 @@ class ControlPanel(QMainWindow):
         self.title = 'Pi Control Panel'
         # Default dimensions
         self.left = 10
-        self.top = 10
-        self.width = 1160
+        self.top = 60
+        self.width = 960
         self.height = 600
         self.initUI()
 
