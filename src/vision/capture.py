@@ -8,9 +8,9 @@ while True:
     ret, frame = cap.read()
 
     # Perform operations on the frame
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    rotate = cv2.rotate(frame, cv2.ROTATE_180)
 
-    cv2.imshow('frame', gray)
+    cv2.imshow('frame', rotate)
     if(cv2.waitKey(1) & 0xFF == ord('q')):
         break
 
