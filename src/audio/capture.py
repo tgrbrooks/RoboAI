@@ -3,11 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-
 RATE = 44100
 CHUNK = 4096
 
 
+# Minimal class to capture audio from microphone
 class AudioSignal(object):
 
     def __init__(self):
@@ -29,8 +29,8 @@ class AudioSignal(object):
             fft = fft[:int(len(fft)/2)]
             freq = np.fft.fftfreq(CHUNK, 1./RATE)
             freq = freq[:int(len(freq)/2)]
-            #return xdata, ydata
-            return freq, fft
+            return xdata, ydata
+            #return freq, fft
         except Exception:
             raise RuntimeError
 
@@ -54,10 +54,10 @@ if __name__=='__main__':
     ln, = plt.plot([], [])
     
     def init():
-        #ax.set_xlim(0, 4096)
-        #ax.set_ylim(-2**16/2, 2**16/2)
-        ax.set_xlim(0, 24000)
-        ax.set_ylim(0, 2**17)
+        ax.set_xlim(0, 4096)
+        ax.set_ylim(-2**16/2, 2**16/2)
+        #ax.set_xlim(0, 24000)
+        #ax.set_ylim(0, 2**17)
         return ln,
 
     def animate(args):

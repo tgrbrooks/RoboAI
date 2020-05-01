@@ -5,9 +5,11 @@ from PyQt5.QtWidgets import (QMainWindow, QPushButton, QListWidget,
                              QGridLayout, QWidget, QTabWidget, QScrollArea,
                              QVBoxLayout, QSizePolicy, QComboBox, QLabel,
                              QLineEdit, QCheckBox)
-from PyQt5.QtCore import QThreadPool, QTimer
+from PyQt5.QtCore import QThreadPool, QTimer, pyqtSlot
+from PyQt5.QtGui import QImage, QPixmap
 
 from display.videoworker import VideoWorker
+from display.audiofigure import AudioFigure
 
 
 class Label(QWidget):
@@ -63,6 +65,8 @@ class ControlPanel(QMainWindow):
 
         # Audio signal display
         main_layout.addWidget(Label('Audio', 'blue'), 0, 6, 2, 3)
+        #audio_figure = AudioFigure(self, width=3, height=2)
+        #main_layout.addWidget(audio_figure, 0, 6, 2, 3)
 
         # Accelerometer display
         main_layout.addWidget(Label('Accelerometer', 'green'), 2, 6, 2, 3)
@@ -83,18 +87,7 @@ class ControlPanel(QMainWindow):
         move_right_button = QPushButton('Right', self)
         move_right_button.setStyleSheet(default_font)
         main_layout.addWidget(move_right_button, 5, 8, 1, 1)
-
-        self.label = QLabel('Start')
-        main_layout.addWidget(self.label, 4, 0)
-        button = QPushButton('DANGER!')
-        button.clicked.connect(self.oh_no)
-        main_layout.addWidget(button, 4, 1)
-
-        self.timer = QTimer()
-        self.timer.setInterval(1000)
-        self.timer.timeout.connect(self.recurring_timer)
-        self.timer.start()
-
+ 
         main_widget = QWidget()
         main_widget.setLayout(main_layout)
         tabs.addTab(main_widget, 'Main')
@@ -104,8 +97,16 @@ class ControlPanel(QMainWindow):
         #----------------------------------------------------------------------
 
         vision_layout = QGridLayout()
-        vision_layout.setContentsMargins(0,0,0,0)
+        vision_layout.setContentsMargins(0, 0, 0, 0)
         vision_layout.setSpacing(20)
+
+        self.video = QLabel(self)
+        self.video.resize(640, 480)
+        video_worker = VideoWorker()
+        video_worker.signals.change_pixmap.connect(self.set_image)
+        video_worker.signals.finished.connect(self.thread_complete)
+        self.threadpool.start(video_worker)
+        vision_layout.addWidget(self.video, 0, 0)
 
         vision_widget = QWidget()
         vision_widget.setLayout(vision_layout)
@@ -116,8 +117,11 @@ class ControlPanel(QMainWindow):
         #----------------------------------------------------------------------
 
         audio_layout = QGridLayout()
-        audio_layout.setContentsMargins(0,0,0,0)
+        audio_layout.setContentsMargins(0, 0, 0, 0)
         audio_layout.setSpacing(20)
+
+        audio_figure = AudioFigure(self)
+        audio_layout.addWidget(audio_figure, 0, 0)
 
         audio_widget = QWidget()
         audio_widget.setLayout(audio_layout)
@@ -128,7 +132,7 @@ class ControlPanel(QMainWindow):
         #----------------------------------------------------------------------
 
         movement_layout = QGridLayout()
-        movement_layout.setContentsMargins(0,0,0,0)
+        movement_layout.setContentsMargins(0, 0, 0, 0)
         movement_layout.setSpacing(20)
 
         movement_widget = QWidget()
@@ -139,32 +143,9 @@ class ControlPanel(QMainWindow):
         self.setCentralWidget(tabs)
         self.show()
 
-    def progress_fn(self, n):
-        print('%d done' % n)
-
-    def execute_this_fn(self, progress_callback):
-        for n in range(0, 5):
-            time.sleep(1)
-            progress_callback.emit(n*100/4)
-
-        return "Done."
-
-    def print_output(self, s):
-        print(s)
+    @pyqtSlot(QImage)
+    def set_image(self, image):
+        self.video.setPixmap(QPixmap.fromImage(image))
 
     def thread_complete(self):
         print("THREAD COMPLETE!")
-
-    def oh_no(self):
-        # Pass the function to execute
-        worker = VideoWorker(self.execute_this_fn)
-        worker.signals.result.connect(self.print_output)
-        worker.signals.finished.connect(self.thread_complete)
-        worker.signals.progress.connect(self.progress_fn)
-
-        # Execute
-        self.threadpool.start(worker) 
-
-    def recurring_timer(self):
-        self.counter +=1
-        self.label.setText("Counter: %d" % self.counter)
