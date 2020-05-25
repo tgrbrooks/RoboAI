@@ -1,4 +1,5 @@
 import time
+import sys
 
 # pyqt imports
 from PyQt5.QtWidgets import (QMainWindow, QPushButton, QListWidget,
@@ -9,6 +10,7 @@ from PyQt5.QtCore import QThreadPool, QTimer, pyqtSlot
 from PyQt5.QtGui import QImage, QPixmap
 
 from display.videoworker import VideoWorker
+from display.pivideoworker import PiVideoWorker
 from display.audiofigure import AudioFigure
 
 
@@ -99,10 +101,13 @@ class ControlPanel(QMainWindow):
         vision_layout = QGridLayout()
         vision_layout.setContentsMargins(0, 0, 0, 0)
         vision_layout.setSpacing(20)
-
+        
         self.video = QLabel(self)
         self.video.resize(640, 480)
-        video_worker = VideoWorker()
+        if sys.platform == 'linux':
+            video_worker = PiVideoWorker()
+        else:
+            video_worker = VideoWorker()
         video_worker.signals.change_pixmap.connect(self.set_image)
         video_worker.signals.finished.connect(self.thread_complete)
         self.threadpool.start(video_worker)
@@ -119,10 +124,10 @@ class ControlPanel(QMainWindow):
         audio_layout = QGridLayout()
         audio_layout.setContentsMargins(0, 0, 0, 0)
         audio_layout.setSpacing(20)
-
+        
         audio_figure = AudioFigure(self)
         audio_layout.addWidget(audio_figure, 0, 0)
-
+        
         audio_widget = QWidget()
         audio_widget.setLayout(audio_layout)
         tabs.addTab(audio_widget, 'Audio')

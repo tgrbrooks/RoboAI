@@ -8,7 +8,7 @@ import numpy as np
 # Record waveforms from the microphone
 class MicrophoneRecorder(object):
 
-    def __init__(self, rate=4000, chunksize=1024):
+    def __init__(self, rate=44100, chunksize=4096):
         # rate = number of frames per second
         self.rate = rate
         # chunk = number of frames signal is split into
@@ -42,7 +42,9 @@ class MicrophoneRecorder(object):
         data = self.amp*np.frombuffer(data, dtype=np.int16)
         # Append array to internal buffet
         with self.lock:
+            print(data.size)
             self.frames.append(data)
+            self.lock = True
             if self.stop:
                 return None, pyaudio.paComplete
         return None, pyaudio.paContinue
